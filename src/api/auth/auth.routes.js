@@ -3,13 +3,6 @@ const {
   findUserByEmail,
   createUserByEmailAndPassword,
 } = require('../users/users.services');
-const {
-  addRefreshTokenToWhitelist,
-  findRefreshTokenById,
-  deleteRefreshToken,
-  revokeTokens
-} = require('./auth.services');
-const { hashToken } = require('../../utils/hashToken');
 
 const router = express.Router();
 

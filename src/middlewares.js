@@ -10,7 +10,6 @@ function notFound(req, res, next) {
 }
 
 /* eslint-disable no-unused-vars */
-const jwt = require('jsonwebtoken');
 
 function errorHandler(err, req, res, next) {
   /* eslint-enable no-unused-vars */
@@ -45,8 +44,13 @@ async function isAuthenticated(req, res, next) {
     req.currentUser = existingUser;
     req.payload = payload;
   } catch (err) {
+    console.log(err);
     res.status(401);
-    throw new Error('🚫 Un-Authorized 🚫');
+
+    res.json({
+      message: err.message,
+      stack: process.env.NODE_ENV === 'production' ? '🚫' : err.stack
+    });
   }
 
   return next();
