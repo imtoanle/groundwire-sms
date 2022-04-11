@@ -8,14 +8,16 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
-CREATE TABLE "RefreshToken" (
+CREATE TABLE "Message" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "hashedToken" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
-    "revoked" BOOLEAN NOT NULL DEFAULT false,
+    "msgType" TEXT NOT NULL DEFAULT 'inbound',
+    "sender" TEXT,
+    "recipient" TEXT,
+    "msg" TEXT NOT NULL,
     "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "RefreshToken_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT "Message_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateIndex
@@ -25,4 +27,4 @@ CREATE UNIQUE INDEX "User_id_key" ON "User"("id");
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "RefreshToken_id_key" ON "RefreshToken"("id");
+CREATE UNIQUE INDEX "Message_id_key" ON "Message"("id");

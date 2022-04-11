@@ -1,3 +1,8 @@
+const bcrypt = require('bcrypt');
+const {
+  findUserByEmail
+} = require('./api/users/users.services');
+
 function notFound(req, res, next) {
   res.status(404);
   const error = new Error(`🔍 - Not Found - ${req.originalUrl}`);
@@ -17,25 +22,30 @@ function errorHandler(err, req, res, next) {
   });
 }
 
-function isAuthenticated(req, res, next) {
-  const { authorization } = req.headers;
-
-  
-  if (!authorization) {
-    res.status(401);
-    throw new Error('🚫 Un-Authorized 🚫');
-  }
-
+async function isAuthenticated(req, res, next) {
   try {
-    const token = authorization.split(' ')[1];
-    const payload = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+    const { email, password, ...payload } = req.body;
+    console.log(`email = ${email}, password = ${password}`);
+    console.log(req.body);
+    if (!email || !password) {
+      throw new Error('You must provide an email and a password.');
+    }
+
+    const existingUser = await findUserByEmail(email);
+
+    if (!existingUser) {
+      throw new Error('Invalid login credentials.');
+    }
+
+    const validPassword = await bcrypt.compare(password, existingUser.password);
+    if (!validPassword) {
+      throw new Error('Invalid login credentials.');
+    }
+
+    req.currentUser = existingUser;
     req.payload = payload;
   } catch (err) {
-    console.log(err);
     res.status(401);
-    if (err.name === 'TokenExpiredError') {
-      throw new Error(err.name);
-    }
     throw new Error('🚫 Un-Authorized 🚫');
   }
 
