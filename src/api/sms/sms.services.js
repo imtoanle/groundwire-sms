@@ -10,9 +10,9 @@ function findAllMessages() {
   return db.message.findMany();
 }
 
-async function findUnreadMessages(lastId) {
-  let lastMessage = await findMessageById(lastId);
-  let cons = { msgType: 'inbound' };
+async function findUnreadMessages(user, lastId) {
+  let lastMessage = lastId && await findMessageById(lastId);
+  let cons = { msgType: 'inbound', userId: user.id };
 
   if (lastMessage) {
     cons.createdAt = { gt: lastMessage.createdAt };

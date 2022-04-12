@@ -7,7 +7,7 @@ const router = express.Router();
 router.post('/fetch', isAuthenticated, async (req, res, next) => {
   try {
     let { lastId } = req.payload;
-    let unreadMessages = await findUnreadMessages(lastId);
+    let unreadMessages = await findUnreadMessages(req.currentUser, lastId);
 
     let data = {
       "unread_smss": mapUnreadMessages(unreadMessages),
